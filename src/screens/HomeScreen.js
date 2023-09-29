@@ -1,11 +1,10 @@
-import React, {useEffect} from 'react';
-import {Button, View, StyleSheet, Text} from 'react-native';
-import {initDatabase} from '#/utils/db';
+import React from 'react';
+import {View, StyleSheet, Text} from 'react-native';
+import Button from '../components/button';
+import Colors from '../components/Colors';
 
 function HomeScreen({navigation}) {
-  useEffect(function () {
-    initDatabase();
-  }, []);
+ 
 
   return (
     <View style={styles.container}>
@@ -19,7 +18,7 @@ function HomeScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: 'white'},
+  container: {flex: 1, backgroundColor: Colors.primary},
   buttons: {flex: 1},
   title: {
     marginTop: 16,
