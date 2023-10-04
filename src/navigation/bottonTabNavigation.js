@@ -11,9 +11,9 @@ import ViewAllTasks from '../screens/ViewAllTasks';
 
 import { database } from '../utils/database';
 const TabArr = [
-  { route: 'HomeScreen', label: 'HomeScreen', type: Icons.Feather, icon: 'home', component: HomeScreen, tabBarColor: Colors.primary },
-  { route: 'CreateTask', label: 'CreateTask', type: Icons.Feather, icon: 'search', component: CreateTask, tabBarColor: Colors.green },
-  { route: 'ViewAllTasks', label: 'ViewAllTasks', type: Icons.Feather, icon: 'plus-square', component: ViewAllTasks, tabBarColor: Colors.red },
+  { route: 'HomeScreen', label: 'HomeScreen', type: Icons.Feather, icon: 'home', component: HomeScreen, tabBarColor: Colors.white },
+  { route: 'CreateTask', label: 'CreateTask', type: Icons.MaterialCommunityIcons, icon: 'beaker-plus-outline', component: CreateTask, tabBarColor: Colors.white },
+  { route: 'ViewAllTasks', label: 'ViewAllTasks', type: Icons.MaterialCommunityIcons, icon: 'format-list-bulleted', component: ViewAllTasks, tabBarColor: Colors.white },
   //{ route: 'Like', label: 'Like', type: Icons.Feather, icon: 'heart', component: Screen, tabBarColor: Colors.yellow },
   //{ route: 'Account', label: 'Account', type: Icons.FontAwesome, icon: 'user-circle-o', component: Screen, tabBarColor: Colors.purple },
 ];

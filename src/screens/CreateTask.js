@@ -5,6 +5,8 @@ import {
   Alert,
   KeyboardAvoidingView,
   Text,
+  SafeAreaView,
+  Keyboard,
   TextInput,
   StyleSheet,
   Pressable,
@@ -13,6 +15,9 @@ import Button from '../components/button';
 import { useIsFocused } from '@react-navigation/native';
 import { database } from '../utils/database';
 import DateTimePicker from '@react-native-community/datetimepicker'
+import COLORS from '../components/Colors'
+import Input from '../components/Input';
+import Medicamento from '../models/Medicamento'
 
 function CreateTask({ navigation }) {
   const [title, setTitle] = useState('');
@@ -22,23 +27,29 @@ function CreateTask({ navigation }) {
   const [showPicker, setShowPicker] = useState(false);
   const [dateInput, setDateInput] = useState("");
 
+  const [inputs, setInputs] = useState({
+    nombre_medicamento: '',
+    dosis: '',
+    periodo: '',
+    fecha_hora: '',
+  });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const isFocused = useIsFocused(); // Obtiene el estado de enfoque de la pantalla
 
   useEffect(() => {
     if (!isFocused) {
-      setTitle('');
+      setInputs({
+        nombre_medicamento: '',
+        dosis: '',
+        periodo: '',
+        fecha_hora: '',
+    });
       setDateInput(''); // Limpiar el TextInput cuando la pantalla pierde el enfoque
     }
   }, [isFocused]);
 
-  function handleTitleChange(text) {
-    setTitle(text);
-  };
-
-  function handleNumericChange(text) {
-    setNumber(text);
-  };
-  
 
   const toggleDatePicker = () => {
     setShowPicker(!showPicker);
@@ -49,22 +60,21 @@ function CreateTask({ navigation }) {
       const currentDate = selectedDate;
       setDate(currentDate);
       setDateInput(currentDate.toDateString());
+      handleOnchange(currentDate.toDateString(),"fecha_hora")
       toggleDatePicker();
     } else {
       toggleDatePicker();
     }
   }
 
-  async function createTask() {
-    if (title === '') {
-      setError('A title for task is required');
-      return;
-    }
+  async function createTask(medicamento) {
+    
     try {
-      await database.setupUsersAsync();
+      
+      await database.setupMedicamentosAsync(medicamento);
       Alert.alert(
         'Success',
-        'Task created',
+        'Medication created',
         [
           {
             text: 'Ok',
@@ -79,29 +89,83 @@ function CreateTask({ navigation }) {
     }
   }
 
+  const handleOnchange = (text, input) => {
+    setInputs(prevState => ({...prevState, [input]: text}));
+  };
+  const handleError = (error, input) => {
+    setErrors(prevState => ({...prevState, [input]: error}));
+  };
+
+  const validate = () => {
+    Keyboard.dismiss();
+    let isValid = true;
+
+    if (!inputs.nombre_medicamento) {
+      handleError('Please input nombre_medicamento', 'nombre_medicamento');
+      isValid = false;
+    } 
+
+    if (!inputs.dosis) {
+      handleError('Please input dosis', 'dosis');
+      isValid = false;
+    }
+
+    if (!inputs.periodo) {
+      handleError('Please input periodo number', 'periodo');
+      isValid = false;
+    } 
+
+    if (!inputs.fecha_hora) {
+      handleError('Please input fecha_hora', 'fecha_hora');
+      isValid = false;
+    }
+
+    if (isValid) {
+      createTask(new Medicamento(inputs.nombre_medicamento, inputs.dosis, inputs.periodo, inputs.fecha_hora));
+    }
+  };
   return (
-    <View style={styles.container}>
-      <View style={styles.buttons}>
-        <Text style={styles.title}>CreateTask</Text>
-        <Button title="HomeScreen task" onPress={() => navigation.navigate('HomeScreen')} />
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
-            <TextInput
-              placeholder="Enter title"
-              onChangeText={handleTitleChange}
-              style={styles.textInput}
-              value={title}
-            />
+    <SafeAreaView style={{backgroundColor: COLORS.primary, flex: 1}}>
+      
+      <ScrollView
+        contentContainerStyle={{paddingTop: 50, paddingHorizontal: 20}}>
+        <Text style={{color: COLORS.black, fontSize: 40, fontWeight: 'bold'}}>
+          Register Medication
+        </Text>
+        <Text style={{color: COLORS.black, fontSize: 18, marginVertical: 10}}>
+          Enter Your Details to Medication
+        </Text>
+        <View style={{marginVertical: 20}}>
+          <Input
+            onChangeText={text => handleOnchange(text, 'nombre_medicamento')}
+            onFocus={() => handleError(null, 'nombre_medicamento')}
+            iconName="medical-bag"
+            label="Medication Name"
+            placeholder="Enter your medication name"
+            error={errors.email}
+          />
 
-            <TextInput
-              style={styles.textInput}
-              keyboardType='numeric'
-              onChangeText={handleNumericChange}
-              value={number}
-              maxLength={10}
-            />
+          <Input
+            keyboardType="numeric"
+            onChangeText={text => handleOnchange(text, 'dosis')}
+            onFocus={() => handleError(null, 'dosis')}
+            iconName="receipt"
+            label="Recommended Dosage (milligrams, grams, milliliters)"
+            placeholder="Enter your Dosage Recommended"
+            error={errors.fullname}
+          />
 
-            {showPicker && (
+          <Input
+            keyboardType="numeric"
+            onChangeText={text => handleOnchange(text, 'periodo')}
+            onFocus={() => handleError(null, 'periodo')}
+            iconName="sort-bool-descending"
+            label="Period"
+            placeholder="Enter your period to administer the dose"
+            error={errors.periodo}
+          />
+          
+          {showPicker && (
               <DateTimePicker
                 mode='date'
                 display='spinner'
@@ -114,28 +178,27 @@ function CreateTask({ navigation }) {
               <Pressable
                 onPress={toggleDatePicker}
               >
-                <TextInput
+                <Input
                   placeholder="Sat Aug 21 2023"
-                  placeholderTextColor="#B9B4B4"
-                  onChangeText={setDateInput}
-                  style={styles.textInput}
+                  onChangeText={onChange}
+                  iconName="calendar"
+                  label="Expiration date of the medication"
                   value={dateInput}
                   editable={false}
+                  error={errors.fecha_hora}
                 />
               </Pressable>
             )}
-            <Button title="Create task" onPress={createTask} />
-            {error && <Text>{error}</Text>}
-          </KeyboardAvoidingView>
-        </ScrollView>
-      </View>
-    </View>
-
+          <Button title="Register" onPress={validate} />
+          
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'white' },
+  container: { flex: 1, backgroundColor: COLORS.black },
   buttons: { flex: 1 },
   title: {
     marginTop: 16,
@@ -145,13 +208,6 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   keyboardAvoidingView: { flex: 1, justifyContent: 'space-between' },
-  textInput: {
-    padding: 10,
-    marginLeft: 35,
-    marginRight: 35,
-    marginTop: 10,
-    borderColor: '#EAB83E',
-    borderWidth: 1
-  }
+  
 });
 export default CreateTask;

@@ -1,6 +1,6 @@
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet} from 'react-native';
-
+import {TouchableOpacity, Text, StyleSheet,useColorScheme} from 'react-native';
+import Colors from './Colors';
 export default function Button({onPress, title}) {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -12,7 +12,7 @@ export default function Button({onPress, title}) {
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#EAB83E',
+    backgroundColor: Colors.darkBlue,
     color: '#ffffff',
     padding: 10,
     marginTop: 16,

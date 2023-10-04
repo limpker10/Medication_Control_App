@@ -1,8 +1,9 @@
-import React, { useEffect , useState} from 'react';
-import { View, StyleSheet, Text ,ActivityIndicator,FlatList} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, ActivityIndicator, FlatList } from 'react-native';
 import Button from '../components/button';
 import { database } from '../utils/database';
-
+import Colors from '../components/Colors';
+import Icon, { Icons } from '../components/Icons';
 function ViewAllTasks({ navigation }) {
 
   //const {taskId} = route.params;
@@ -23,10 +24,10 @@ function ViewAllTasks({ navigation }) {
             return;
           }
           //setIsLoading(false);
-          console.log("asd2"+taskFromDatabase[0].title)
+          console.log("asd2" + taskFromDatabase[0].title)
           setTask(taskFromDatabase);
           setIsLoading(false);
-        }catch(e){
+        } catch (e) {
           setError(`An error occurred getting the tasks: ${e.message}`);
         }
       }
@@ -49,28 +50,32 @@ function ViewAllTasks({ navigation }) {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-    <Text style={styles.cardTitle}>{item.id}</Text>
-    <Text style={styles.cardDescription}>{item.title}</Text>
-  </View>
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardTitle}>{item.id}</Text>
+        <Icon name="beaker-plus-outline" type={Icons.MaterialCommunityIcons} size={24} color="#000" />
+      </View>
+      <Text style={styles.cardDescription}><Text style={styles.label}>Medicamento:</Text> {item.nombre_medicamento}</Text>
+      <Text style={styles.cardDescription}><Text style={styles.label}>Dosis:</Text> {item.dosis}</Text>
+      <Text style={styles.cardDescription}><Text style={styles.label}>Fecha y Hora:</Text> {item.fecha_hora}</Text>
+      <Text style={styles.cardDescription}><Text style={styles.label}>Periodo:</Text> {item.periodo} horas</Text>
+    </View>
   );
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.buttons}>
-        <Text style={styles.title}>ViewAllTasks</Text>
+        <Text style={styles.title}>Medications</Text>
         <FlatList
-        data={tasks}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
-        <Button title="HomeScreen task" onPress={() => navigation.navigate('HomeScreen')} />
-
+          data={tasks}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+        />
       </View>
     </View>
   )
 }
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'white' },
+  container: { flex: 1, backgroundColor: Colors.primary },
   buttons: { flex: 1 },
   title: {
     marginTop: 16,
@@ -80,29 +85,37 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   card: {
-    backgroundColor: '#fff',
-    marginBottom: 20,
-    borderRadius: 10,
+    backgroundColor: Colors.light,
     padding: 20,
+    margin: 10,
+    borderRadius: 20, 
+    borderWidth: 0.5,
+    borderColor: '#d1d1d1',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5, // para Android
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3, 
+    shadowRadius: 4,  
+    elevation: 3,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   cardDescription: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: '#777',
+    fontSize: 14,
+    marginVertical: 2,
   },
   cardDate: {
     fontSize: 14,
     color: '#999',
+  },
+  label: {
+    fontWeight: 'bold',
   },
 });
 export default ViewAllTasks;

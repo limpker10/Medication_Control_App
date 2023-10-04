@@ -9,9 +9,9 @@ function HomeScreen({navigation}) {
   return (
     <View style={styles.container}>
       <View style={styles.buttons}>
-        <Text style={styles.title}>SQLite</Text>
-        <Button title="View all tasks" onPress={() => navigation.navigate('ViewAllTasks')} />
-        <Button title="Create task" onPress={() => navigation.navigate('CreateTask')} />
+        <Text style={styles.title}>Medication Control</Text>
+        <Button title="See all medications" onPress={() => navigation.navigate('ViewAllTasks')} />
+        <Button title="Add medications" onPress={() => navigation.navigate('CreateTask')} />
       </View>
     </View>
   );

@@ -28,7 +28,7 @@ export default function App() {
       />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerBackTitleVisible : false}}>
-          <Stack.Screen name={ROUTES.HOME_DRAWER} component={Navigation} options={{headerShown: false}} />
+          <Stack.Screen name={ROUTES.HOME_TAB} component={Navigation} options={{headerShown: false}} />
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="ViewAllTasks" component={ViewAllTasks} />
           <Stack.Screen name="CreateTask" component={CreateTask} />

@@ -3,8 +3,8 @@ import React from 'react'
 import * as SQLite from "expo-sqlite"
 
 
-const dbName = 'task.db';
-const tableName = 'task';
+const dbName = 'MedControlDB.db';
+const tableName = 'ControlMedicamentos';
 const db = SQLite.openDatabase(dbName)
 
 const getUsers = (setUserFunc) => {
@@ -50,7 +50,13 @@ const setupDatabaseAsync = async () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
         tx.executeSql(
-          `create table if not exists ${tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(512))`
+          `create table if not exists ${tableName} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre_medicamento VARCHAR(255) NOT NULL,
+            dosis INTEGER NOT NULL,
+            periodo INT NOT NULL,
+            fecha_hora INTEGER NOT NULL
+        )`
         );
       },
       (_, error) => { console.log("db error creating tables"); console.log(error); reject(error) },
@@ -69,6 +75,26 @@ const setupUsersAsync = async () => {
     )
   })
 }
+const setupMedicamentosAsync = async (medicamento) => {
+  return new Promise((resolve, _reject) => {
+    db.transaction(tx => {
+        tx.executeSql(
+          `insert into ${tableName} (nombre_medicamento, dosis, periodo, fecha_hora) values (?, ?, ?, ?)`, 
+          [medicamento.nombre_medicamento, medicamento.dosis, medicamento.periodo, medicamento.fecha_hora]
+        );
+      },
+      (t, error) => { 
+        console.log("db error insertMedicamento"); 
+        console.log(error); 
+        resolve(); 
+      },
+      (t, success) => { 
+        resolve(success);
+      }
+    )
+  })
+}
+
 
 const getTasks = async () => {
   return new Promise((resolve, reject) => {
@@ -101,5 +127,6 @@ export const database = {
   setupDatabaseAsync,
   setupUsersAsync,
   getTasks,
+  setupMedicamentosAsync,
   dropDatabaseTablesAsync,
 }

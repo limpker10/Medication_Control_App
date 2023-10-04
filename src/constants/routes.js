@@ -5,7 +5,6 @@ export default {
 
   HOME: 'Home',
   HOME_TAB: 'Home Tab',
-  HOME_DRAWER: 'Home Drawer',
 
   WALLET: 'Wallet',
   WALLET_DRAWER: 'Wallet Drawer',
